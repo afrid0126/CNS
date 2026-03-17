@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Diffie-Hellman Demo</title>
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            background: #0f172a;
+            color: white;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        input {
+            padding: 8px;
+            margin: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #22c55e;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+        .box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #1e293b;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🔐 Diffie-Hellman Key Exchange</h1>
+
+    <div class="container">
+
+        <h3>Public Values</h3>
+        <input type="number" id="p" placeholder="Prime (p)">
+        <input type="number" id="g" placeholder="Base (g)">
+
+        <h3>Private Keys</h3>
+        <input type="number" id="a" placeholder="Alice private key">
+        <input type="number" id="b" placeholder="Bob private key">
+
+        <br><br>
+        <button onclick="calculate()">Generate Keys</button>
+
+        <div class="box" id="output"></div>
+
+    </div>
+
+<script>
+function modExp(base, exp, mod) {
+    let result = 1;
+    base = base % mod;
+
+    while (exp > 0) {
+        if (exp % 2 === 1)
+            result = (result * base) % mod;
+
+        exp = Math.floor(exp / 2);
+        base = (base * base) % mod;
+    }
+    return result;
+}
+
+function calculate() {
+    let p = parseInt(document.getElementById("p").value);
+    let g = parseInt(document.getElementById("g").value);
+    let a = parseInt(document.getElementById("a").value);
+    let b = parseInt(document.getElementById("b").value);
+
+    // Public keys
+    let A = modExp(g, a, p);
+    let B = modExp(g, b, p);
+
+    // Shared secret
+    let key1 = modExp(B, a, p);
+    let key2 = modExp(A, b, p);
+
+    document.getElementById("output").innerHTML = `
+        <h3>Results</h3>
+        Alice Public Key (A): ${A} <br>
+        Bob Public Key (B): ${B} <br><br>
+        Shared Key (Alice): ${key1} <br>
+        Shared Key (Bob): ${key2} <br><br>
+        <b>${key1 === key2 ? "✅ Keys Match!" : "❌ Keys Do Not Match!"}</b>
+    `;
+}
+</script>
+
+</body>
+</html>
